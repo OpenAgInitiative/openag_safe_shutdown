@@ -18,10 +18,10 @@ python /home/pi/openag_safe_shutdown/safe_shutdown.py
 
 ## Hardware Install
 ### Connect RPI GPIO 11/13/15/17 plug to raspberry pi
-![](photos/plug_to_rpi.jpg)
+![](photos/plug_to_rpi.JPG)
 
 ### Connect white wire to CH1 on delay relay
-![](photos/connect_white_wire.jpg)
+![](photos/connect_white_wire.JPG)
 
 ### Program relay now, here are steps:
 1. Hold set to enter programming mode
@@ -31,13 +31,13 @@ python /home/pi/openag_safe_shutdown/safe_shutdown.py
 5. Save programming by holding set
 
 ### Program relay mode = 10
-![](photos/set_relay_mode.jpg)
+![](photos/set_relay_mode.JPG)
 
 ### Program relay t1 = 30
-![](photos/set_relay_t1.jpg)
+![](photos/set_relay_t1.JPG)
 
 ### Program relay t2 = 5
-![](photos/set_relay_t2.jpg)
+![](photos/set_relay_t2.JPG)
 
 ### Program relay nx = 0101
-![](photos/set_relay_nx.jpg)
+![](photos/set_relay_nx.JPG)
