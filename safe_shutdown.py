@@ -8,33 +8,38 @@ import os
 import logging
 logging.basicConfig()
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 # Use the Broadcom SOC Pin numbers
 # Setup the Pin with Internal pullups enabled and PIN in reading mode.
-logging.debug('Setting GPIO27 / PIN13 to INPUT PULLUP')
+logger.debug('Setting GPIO27 / PIN13 to INPUT PULLUP')
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(27, GPIO.IN, pull_up_down = GPIO.PUD_UP) # PIN13 / YEL / SW-COM
 
 # Turn delay relay on
-logging.debug('Setting GPIO22 / PIN15 to OUTPUT HIGH')
+logger.debug('Setting GPIO22 / PIN15 to OUTPUT HIGH')
 GPIO.setup(22, GPIO.OUT) # PIN15 / WHT / CH1
 GPIO.output(22, GPIO.HIGH)
 
-# # Our function on what to do when the button is pressed
-def Shutdown(channel):
-    logger.debug('Detected falling edge on GPIO27 / PIN13')
-    logger.info('Safely shutting down the system')
-    os.system("sudo shutdown -h now")
+# Send a stable low signal to the power switch
+logger.debug('Setting GPIO17 / PIN11 to OUTPUT LOW')
+GPIO.setup(17, GPIO.OUT) # PIN15 / WHT / CH1
+GPIO.output(17, GPIO.LOW)
 
-# Add our function to execute when the button pressed event happens
-GPIO.add_event_detect(27, GPIO.FALLING, callback = Shutdown, bouncetime = 2000)
-
-# Now wait!
+# Monitor pin for stable signal to safely shutdown
 while 1:
-    # print('PIN13/GPIO27: {}'.format(GPIO.input(27)))
-    # if not GPIO.input(27):
-    #
-    #     print('Safely shutdown')
-
-    time.sleep(0.1)
+    if not GPIO.input(27):
+        logger.debug('Initiating safe shutdown sequence')
+        successful_debounce = True
+        for i in range(5000):
+            if GPIO.input(27):
+                logger.debug('Signal interrupted, breaking out of safe shutdown sequence')
+                successful_debounce = False
+                break
+            time.sleep(0.001)
+        if successful_debounce:
+            logger.debug('Safely shutting down')
+            time.sleep(1)
+            os.system("sudo shutdown -h now")
+            break
+    time.sleep(1)
